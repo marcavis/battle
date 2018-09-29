@@ -2,8 +2,6 @@ package battle;
 
 import java.util.Random;
 
-import asciiPanel.AsciiPanel;
-
 public class Main {
 	public static void main(String[] args) {
 		Player warrior = new Player("Gort");

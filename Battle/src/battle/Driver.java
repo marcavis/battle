@@ -1,7 +1,9 @@
 package battle;
 
 import com.valkryst.VTerminal.Screen;
+import com.valkryst.VTerminal.Tile;
 
+import java.awt.Color;
 import java.io.IOException;
 
 public class Driver {
@@ -9,19 +11,20 @@ public class Driver {
         final Screen screen = new Screen();
         screen.addCanvasToFrame();
 
-        screen.getTileAt(0, 0).setCharacter('H');
-        screen.getTileAt(1, 0).setCharacter('e');
-        screen.getTileAt(2, 0).setCharacter('l');
-        screen.getTileAt(3, 0).setCharacter('l');
-        screen.getTileAt(4, 0).setCharacter('o');
+        for(int x = 0; x < screen.getWidth(); x++) {
+        	for(int y = 0; y < screen.getHeight(); y++) {
+        		screen.getTileAt(x, y).setCharacter('1');
+        	}
+        }
 
-        screen.getTileAt(6, 0).setCharacter('W');
-        screen.getTileAt(7, 0).setCharacter('o');
-        screen.getTileAt(8, 0).setCharacter('r');
-        screen.getTileAt(9, 0).setCharacter('l');
-        screen.getTileAt(10, 0).setCharacter('d');
-        screen.getTileAt(11, 0).setCharacter('!');
+        Tile[] helloTiles = screen.getTiles().getRowSubset(0, 0, 12);
 
+        for (final Tile tile : helloTiles) {
+            tile.setBackgroundColor(Color.BLACK);
+            tile.setForegroundColor(Color.WHITE);
+        }
+        System.out.println(screen.getWidth());
+        
         screen.draw();
     }
 }
