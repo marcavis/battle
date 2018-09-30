@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class Driver {
     public static void main(String[] args) throws IOException {
-        final Screen screen = new Screen();
+        final Screen screen = new Screen(80,24);
         screen.addCanvasToFrame();
 
         for(int x = 0; x < screen.getWidth(); x++) {
@@ -23,7 +23,8 @@ public class Driver {
             tile.setBackgroundColor(Color.BLACK);
             tile.setForegroundColor(Color.WHITE);
         }
-        System.out.println(screen.getWidth());
+        
+        
         
         screen.draw();
     }
