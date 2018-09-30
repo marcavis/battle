@@ -9,13 +9,13 @@ public enum Sprite {
 	UNKNOWN('?', Color.BLACK, Color.RED),
 
 	DARKNESS('█', Color.BLACK, Color.BLACK), 
-	DIRT('.', new Color(0x452F09), new Color(0x372507)), 
-	GRASS('.', new Color(0x3D4509), new Color(0x303707)), 
+	DIRT('▒', new Color(0x452F09), new Color(0x372507)), 
+	GRASS('▒', new Color(0x4FAF1F), new Color(0x5FBF2F)), 
 	WALL('#', new Color(0x494949), new Color(0x3C3C3C)),
-	HILL('~', new Color(0x6F6F2F), Color.BLACK),
-	MOUNTAIN('^', new Color(0x7F7F7F), new Color(0x707070)),
-	WATER('=', new Color(0x1F1F8F), Color.BLACK),
-	SWAMP('"', new Color(0x305F00), new Color(0x235000)),
+	HILL('▒', new Color(0x6F6F2F), new Color(0x7F7F3F)),
+	MOUNTAIN('▒', new Color(0x7F7F7F), new Color(0x707070)),
+	WATER('▒', new Color(0x1F1F8F), Color.BLACK),
+	SWAMP('▒', new Color(0x305F40), new Color(0x235040)),
 	
 	PLAYER('@', new Color(0, 0, 0, 0), Color.GREEN), ENEMY('E', new Color(0, 0, 0, 0), Color.RED);
 
