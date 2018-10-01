@@ -6,7 +6,7 @@ import java.awt.Point;
 import java.io.IOException;
 import java.util.Random;
 
-public class Driver {
+public class Driver2 {
 	public static void main(String[] args) throws IOException {
 		Random r = new Random();
 		final Screen screen = new Screen(80, 30);

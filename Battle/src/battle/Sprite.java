@@ -17,7 +17,9 @@ public enum Sprite {
 	WATER('▒', new Color(0x1F1F8F), Color.BLACK),
 	SWAMP('▒', new Color(0x305F40), new Color(0x235040)),
 	
-	PLAYER('@', new Color(0, 0, 0, 0), Color.GREEN), ENEMY('E', new Color(0, 0, 0, 0), Color.RED);
+	PLAYER('@', new Color(0, 0, 0, 0), Color.GREEN), ENEMY('E', new Color(0, 0, 0, 0), Color.RED),
+	ORC('O', new Color(0, 0, 0, 0), Color.RED), GHOST('G', new Color(0, 0, 0, 0), Color.RED),
+	NAGA('N', new Color(0, 0, 0, 0), Color.RED);
 
 	/** The character. */
 	@Getter
