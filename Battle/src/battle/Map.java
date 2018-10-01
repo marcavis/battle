@@ -5,6 +5,7 @@ import com.valkryst.VTerminal.component.Layer;
 import lombok.Getter;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Map extends Layer {
 	/** The mapTiles. */
@@ -98,4 +99,27 @@ public class Map extends Layer {
 	public int getViewHeight() {
 		return super.tiles.getHeight();
 	}
+	
+	/**
+	 * Retrieves the neighbor cells from the current position.
+	 * Doesn't even try to do it for cells in the map borders
+	 * 
+	 * @return A list of positions that are ensured to be inside the map bounds. 
+	 */
+	public ArrayList<Point> getNeighbors(Point p) {
+		if(p.x <= 0 || p.y <= 0 || p.x >= 79 || p.y >= 29) {
+			return null;
+		}
+		ArrayList<Point> neighbors = new ArrayList<Point>();
+		neighbors.add(new Point(p.x-1, p.y-1));
+		neighbors.add(new Point(p.x, p.y-1));
+		neighbors.add(new Point(p.x+1, p.y-1));
+		neighbors.add(new Point(p.x-1, p.y));
+		neighbors.add(new Point(p.x+1, p.y));
+		neighbors.add(new Point(p.x-1, p.y+1));
+		neighbors.add(new Point(p.x, p.y+1));
+		neighbors.add(new Point(p.x+1, p.y+1));
+		return neighbors;
+	}
+	
 }

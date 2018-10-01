@@ -1,20 +1,35 @@
 package battle;
 
 import com.valkryst.VTerminal.Screen;
+import com.valkryst.VTerminal.font.Font;
+import com.valkryst.VTerminal.font.FontLoader;
 
-import java.awt.Point;
+import entity.Entity;
+import entity.Player;
+import entity.WalkType;
+
+import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Driver {
-	public static void main(String[] args) throws IOException {
-		Random r = new Random();
-		final Screen screen = new Screen(80, 30);
-		screen.addCanvasToFrame();
+    public static void main(String[] args) throws IOException {
+    	Random r = new Random();
+        final Font font = FontLoader.loadFontFromJar("Fonts/DejaVu Sans Mono/18pt/bitmap.png", "Fonts/DejaVu Sans Mono/18pt/data.fnt", 1);
+        final Screen screen = new Screen(80, 30, font);
+        screen.addCanvasToFrame();
 
-		final Map map = new Map();
-		screen.addComponent(map);
-		
+        final Map map = new Map();
+        screen.addComponent(map);
+
+//        final Point position = new Point(10, 10);
+//        final Dimension dimensions = new Dimension(10, 5);
+//        final Room room = new Room(position, dimensions);
+//        room.carve(map);
+
+        screen.draw();
+
 		for(int x = 0; x < map.getMapWidth(); x++) {
 			for(int y = 0; y < map.getMapHeight(); y++) {
 				MapTile thisTile = map.getMapTiles()[x][y];
@@ -33,7 +48,7 @@ public class Driver {
 			for(int x = 0; x < map.getMapWidth(); x++) {
 				for(int y = 0; y < map.getMapHeight(); y++) {
 					if (distance(new Point(x, y), target) < (radius * radius)) {
-						MapTile thisTile = map.getMapTiles()[y][x];
+						MapTile thisTile = map.getMapTiles()[x][y];
 						int newTerrainType = thisTile.getTerrainType();
 						if(newTerrainType >= 5) {
 							thisTile.setTerrainType(5);
@@ -56,17 +71,39 @@ public class Driver {
 			}
 		}
 		
-		Enemy orc = new Enemy(Sprite.ORC, new Point(75, 8));
-		Enemy ghost = new Enemy(Sprite.GHOST, new Point(75, 12));
-		Enemy naga = new Enemy(Sprite.NAGA, new Point(75, 16));
+		Entity orc = new Entity(Sprite.ORC, new Point(75, 8), "Orc");
+		orc.setWalkType(WalkType.HUMANOID);
+		Entity ghost = new Entity(Sprite.GHOST, new Point(75, 12), "Ghost");
+		ghost.setWalkType(WalkType.ETHEREAL);
+		Entity naga = new Entity(Sprite.NAGA, new Point(75, 16), "Naga");
+		naga.setWalkType(WalkType.AMPHIBIOUS);
+		Entity target = new Entity(Sprite.PLAYER, new Point(5, 22), "Naga");
+		
+		map.addComponent(orc);
+		map.addComponent(ghost);
+		map.addComponent(naga);
+		map.addComponent(target);
+		
+		ArrayList<Point> orcPath = orc.findPath(map, target.getPosition());
+//		for (Point point : orcPath) {
+//			Entity marker = new Entity(Sprite.MARKER, point, "X");
+//			map.addComponent(marker);
+//		}
+		ArrayList<Point> ghostPath = ghost.findPath(map, target.getPosition());
+		ArrayList<Point> nagaPath = naga.findPath(map, target.getPosition());
+		for (Point point : nagaPath) {
+			Entity marker = new Entity(Sprite.MARKER, point, "X");
+			map.addComponent(marker);
+		}
 		
 		map.updateLayerTiles();
-		screen.draw();
-	}
-	
-	public static double distance(Point a, Point b) {
-		double deltaX = a.getX() - b.getX();
-		double deltaY = a.getY() - b.getY();
+
+        screen.draw();
+    }
+    
+    public static int distance(Point a, Point b) {
+		int deltaX = a.x - b.x;
+		int deltaY = a.y - b.y;
 		return deltaX * deltaX + deltaY * deltaY;
 	}
 	
@@ -85,6 +122,50 @@ public class Driver {
 
 		default:
 			return Sprite.DIRT;
+		}
+	}
+
+	/**
+	 * 
+	 * @param entity
+	 * 			The entity that wants to know the cost to move to "neighbor".
+	 * @param current
+	 * 			The current position of the entity.
+	 * @param neighbor
+	 * 			The destination.
+	 * @return
+	 */
+	public static Integer inWorldDistance(Map map, Entity entity, Point current, Point neighbor) {
+		int s = 0;
+		if(s < 0)
+			return 1;
+		Integer terrain = map.getMapTiles()[neighbor.y][neighbor.x].getTerrainType();
+		System.out.println("fff");
+		switch (entity.getWalkType()) {
+		//prefers walking on wet terrain
+		case AMPHIBIOUS:
+			switch (terrain) {
+			case 1: return 3;
+			case 2: return 5;
+			case 3: return 8;
+			case 4: return 20;
+			case 5: return 100;
+			default: return 1000;
+			}
+		//ghosts ignore terrain
+		case ETHEREAL:
+			return 10;
+		//prefers walking on dry, flat land
+		case HUMANOID:
+			switch (terrain) {
+			case 1: return 15;
+			case 2: return 6;
+			case 3: return 3;
+			case 4: return 10;
+			case 5: return 40;
+			}
+		default:
+			return 10;
 		}
 	}
 }
