@@ -15,14 +15,16 @@ public enum Sprite {
 
 	HILL('▒', new Color(0x6F6F2F), new Color(0x7F7F3F)),
 	MOUNTAIN('▒', new Color(0x7F7F7F), new Color(0x707070)),
-	WATER('▒', new Color(0x1F1F8F), Color.BLACK),
+	WATER('▒', new Color(0x3F3FBF), Color.BLACK),
 	SWAMP('▒', new Color(0x305F40), new Color(0x235040)),
 	MARKER('X', new Color(0, 0, 0, 0), Color.BLACK),
+	MARKER2('O', new Color(0, 0, 0, 0), Color.BLACK),
     
     PLAYER('@', new Color(0, 0, 0 ,0), Color.GREEN),
     ENEMY('E', new Color(0, 0, 0, 0), Color.RED),
     ORC('O', new Color(0, 0, 0, 0), new Color(0xB01010)),
     GHOST('G', new Color(0, 0, 0, 0), Color.DARK_GRAY),
+    DWARF('D', new Color(0, 0, 0, 0), new Color(0xBF2FBF)),
     NAGA('N', new Color(0, 0, 0, 0), new Color(0x101090));
 
     /** The character. */

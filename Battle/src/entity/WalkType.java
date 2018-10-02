@@ -1,5 +1,5 @@
 package entity;
 
 public enum WalkType {
-	HUMANOID, ETHEREAL, AMPHIBIOUS;
+	HUMANOID, ETHEREAL, AMPHIBIOUS, HILLDWELLER;
 }

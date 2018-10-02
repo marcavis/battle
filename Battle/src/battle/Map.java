@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Map extends Layer {
 	/** The mapTiles. */
@@ -107,9 +108,6 @@ public class Map extends Layer {
 	 * @return A list of positions that are ensured to be inside the map bounds. 
 	 */
 	public ArrayList<Point> getNeighbors(Point p) {
-		if(p.x <= 0 || p.y <= 0 || p.x >= 79 || p.y >= 29) {
-			return null;
-		}
 		ArrayList<Point> neighbors = new ArrayList<Point>();
 		neighbors.add(new Point(p.x-1, p.y-1));
 		neighbors.add(new Point(p.x, p.y-1));
@@ -119,7 +117,20 @@ public class Map extends Layer {
 		neighbors.add(new Point(p.x-1, p.y+1));
 		neighbors.add(new Point(p.x, p.y+1));
 		neighbors.add(new Point(p.x+1, p.y+1));
+		boolean[] removalList = new boolean[8];
+		for (int p1 = 0; p1 < neighbors.size(); p1++) {
+			Point point = neighbors.get(p1);
+			if(point.x <= 0 || point.y <= 0 || point.x >= 79 || point.y >= 29) {
+				removalList[p1] = true;
+			}
+		}
+		for (int p1 = 0; p1 < neighbors.size(); p1++) {
+			if(removalList[p1]) {
+				neighbors.remove(p1);
+				p1--;
+			}
+		}
+		//Collections.shuffle(neighbors);
 		return neighbors;
-	}
-	
+	}	
 }

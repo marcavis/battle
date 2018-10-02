@@ -5,7 +5,6 @@ import com.valkryst.VTerminal.font.Font;
 import com.valkryst.VTerminal.font.FontLoader;
 
 import entity.Entity;
-import entity.Player;
 import entity.WalkType;
 
 import java.awt.*;
@@ -13,8 +12,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
+
 public class Driver {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
     	Random r = new Random();
         final Font font = FontLoader.loadFontFromJar("Fonts/DejaVu Sans Mono/18pt/bitmap.png", "Fonts/DejaVu Sans Mono/18pt/data.fnt", 1);
         final Screen screen = new Screen(80, 30, font);
@@ -40,7 +40,7 @@ public class Driver {
 		}
 		
 		//randomize the map
-		int iterations = 35;
+		int iterations = 48;
 		do {
 			Point target = new Point(Main.dice(1, 24, 3),Main.dice(1, 60, 10));
 			int radius = Main.dice(1, 4, 4);
@@ -49,10 +49,10 @@ public class Driver {
 				for(int y = 0; y < map.getMapHeight(); y++) {
 					if (distance(new Point(x, y), target) < (radius * radius)) {
 						MapTile thisTile = map.getMapTiles()[x][y];
-						int newTerrainType = thisTile.getTerrainType();
-						if(newTerrainType >= 5) {
+						int newTerrainType = thisTile.getTerrainType() + effect;
+						if(newTerrainType > 5) {
 							thisTile.setTerrainType(5);
-						} else if(newTerrainType <= 1) {
+						} else if(newTerrainType < 1) {
 							thisTile.setTerrainType(1);
 						} else {
 							thisTile.setTerrainType(thisTile.getTerrainType() + effect);
@@ -73,32 +73,80 @@ public class Driver {
 		
 		Entity orc = new Entity(Sprite.ORC, new Point(75, 8), "Orc");
 		orc.setWalkType(WalkType.HUMANOID);
-		Entity ghost = new Entity(Sprite.GHOST, new Point(75, 12), "Ghost");
+		Entity ghost = new Entity(Sprite.GHOST, new Point(75, 16), "Ghost");
 		ghost.setWalkType(WalkType.ETHEREAL);
-		Entity naga = new Entity(Sprite.NAGA, new Point(75, 16), "Naga");
+		Entity naga = new Entity(Sprite.NAGA, new Point(75, 20), "Naga");
 		naga.setWalkType(WalkType.AMPHIBIOUS);
-		Entity target = new Entity(Sprite.PLAYER, new Point(5, 22), "Naga");
+		Entity dwarf = new Entity(Sprite.DWARF, new Point(75, 12), "Dwarf");
+		dwarf.setWalkType(WalkType.HILLDWELLER);
+		Entity target = new Entity(Sprite.PLAYER, new Point(5, 22), "Target");
 		
 		map.addComponent(orc);
 		map.addComponent(ghost);
 		map.addComponent(naga);
+		map.addComponent(dwarf);
 		map.addComponent(target);
 		
 		ArrayList<Point> orcPath = orc.findPath(map, target.getPosition());
-//		for (Point point : orcPath) {
-//			Entity marker = new Entity(Sprite.MARKER, point, "X");
-//			map.addComponent(marker);
-//		}
 		ArrayList<Point> ghostPath = ghost.findPath(map, target.getPosition());
 		ArrayList<Point> nagaPath = naga.findPath(map, target.getPosition());
-		for (Point point : nagaPath) {
-			Entity marker = new Entity(Sprite.MARKER, point, "X");
-			map.addComponent(marker);
-		}
+		ArrayList<Point> dwarfPath = dwarf.findPath(map, target.getPosition());
 		
 		map.updateLayerTiles();
-
-        screen.draw();
+		screen.draw();
+		
+		int longWait = 3000;
+		
+		do {
+		ArrayList<Entity> orcMarkers = plotPath(map, orcPath, Sprite.MARKER);
+		map.updateLayerTiles();
+		screen.draw();
+		Thread.sleep(longWait);
+		cleanPath(map, orcMarkers);
+		map.updateLayerTiles();
+		screen.draw();
+		Thread.sleep(300);
+		ArrayList<Entity> dwarfMarkers = plotPath(map, dwarfPath, Sprite.MARKER);
+		map.updateLayerTiles();
+		screen.draw();
+		Thread.sleep(longWait);
+		cleanPath(map, dwarfMarkers);
+		map.updateLayerTiles();
+		screen.draw();
+		Thread.sleep(300);
+		ArrayList<Entity> ghostMarkers = plotPath(map, ghostPath, Sprite.MARKER);
+		map.updateLayerTiles();
+		screen.draw();
+		Thread.sleep(longWait);
+		cleanPath(map, ghostMarkers);
+		map.updateLayerTiles();
+		screen.draw();
+		Thread.sleep(300);
+		ArrayList<Entity> nagaMarkers = plotPath(map, nagaPath, Sprite.MARKER);
+		map.updateLayerTiles();
+		screen.draw();
+		Thread.sleep(longWait);
+		cleanPath(map, nagaMarkers);
+		map.updateLayerTiles();
+		screen.draw();
+		Thread.sleep(300);
+		} while (true);
+    }
+    
+    public static void cleanPath(Map map, ArrayList<Entity> path) {
+    	for (Entity entity : path) {
+			map.removeComponent(entity);
+		}
+    }
+    
+    public static ArrayList<Entity> plotPath(Map map, ArrayList<Point> path, Sprite sign) {
+    	ArrayList<Entity> markers = new ArrayList<Entity>();
+    	for (Point point : path) {
+			Entity marker = new Entity(sign, point, "X");
+			map.addComponent(marker);
+			markers.add(marker);
+		}
+    	return markers;
     }
     
     public static int distance(Point a, Point b) {
@@ -140,17 +188,15 @@ public class Driver {
 		if(s < 0)
 			return 1;
 		Integer terrain = map.getMapTiles()[neighbor.y][neighbor.x].getTerrainType();
-		System.out.println("fff");
 		switch (entity.getWalkType()) {
 		//prefers walking on wet terrain
 		case AMPHIBIOUS:
 			switch (terrain) {
-			case 1: return 3;
-			case 2: return 5;
-			case 3: return 8;
-			case 4: return 20;
+			case 1: return 6;
+			case 2: return 10;
+			case 3: return 20;
+			case 4: return 40;
 			case 5: return 100;
-			default: return 1000;
 			}
 		//ghosts ignore terrain
 		case ETHEREAL:
@@ -158,11 +204,19 @@ public class Driver {
 		//prefers walking on dry, flat land
 		case HUMANOID:
 			switch (terrain) {
-			case 1: return 15;
-			case 2: return 6;
-			case 3: return 3;
+			case 1: return 60;
+			case 2: return 20;
+			case 3: return 6;
+			case 4: return 15;
+			case 5: return 100;
+			}
+		case HILLDWELLER:
+			switch (terrain) {
+			case 1: return 70;
+			case 2: return 35;
+			case 3: return 10;
 			case 4: return 10;
-			case 5: return 40;
+			case 5: return 20;
 			}
 		default:
 			return 10;
