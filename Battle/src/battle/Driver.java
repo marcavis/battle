@@ -152,8 +152,18 @@ public class Driver {
     public static int distance(Point a, Point b) {
 		int deltaX = a.x - b.x;
 		int deltaY = a.y - b.y;
-		return deltaX * deltaX + deltaY * deltaY;
+		
+		return deltaX * deltaX + deltaY * deltaY; 
+		
 	}
+    
+    //distance function used in the pathfinding algorithm since walking
+    //diagonally incurs no extra cost
+    public static int roguelikeDistance(Point a, Point b) {
+    	int deltaX = a.x - b.x;
+		int deltaY = a.y - b.y;
+    	return Math.max(Math.abs(deltaX), Math.abs(deltaY));
+    }
 	
 	public static Sprite applyTerrain(int terrain) {
 		switch (terrain) {

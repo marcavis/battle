@@ -168,7 +168,7 @@ public class Entity extends Layer {
 				//this is a better path
 				cameFrom.put(neighbor, current);
 				gScore.put(neighbor, tentative_gScore);
-				fScore.put(neighbor, gScore.get(neighbor) + (int) Math.sqrt(Driver.distance(neighbor, destination)));
+				fScore.put(neighbor, gScore.get(neighbor) + Driver.roguelikeDistance(neighbor, destination) * 10);
 			}
     	}
     	//unreachable
